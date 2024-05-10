@@ -1,0 +1,47 @@
+config:
+  dashboard:
+    altitude: '+0'
+    message:
+      halt: "プログラムを停止します"
+    font:
+      size: 10
+    color:
+      background: "#00AAFF"
+      lit: "#FF7700"
+      unlit: "#000000"
+      mask: "#555555"
+
+    launch_setup:
+      label: "パネル"
+      package: rtk_tools
+      file: panel.launch
+
+    indicator1:
+      label: "YCAM"
+      topic: /rovi/stat
+      type: std_msgs/Bool
+      timeout: 2
+    indicator2:
+      label: "通信"
+      topic: /rsocket/stat
+      type: std_msgs/Bool
+      timeout: 2
+
+    display:
+      color:
+        background: "#FFFFFF"
+        foreground: "#0000FF"
+    display1:
+      label: "サブレシピ番号："
+      name: /wpc/recipeNumber
+    display2:
+      label: "レシピ名："
+      name: /wpc/recipeName
+
+  panel:
+    lift: False
+    color:
+      background: "#00AAFF"
+    dump_dir@: /wpc/recipeName
+    dump_ver@: /wpc/recipeNumber
+    dump_prefix: WPC/recipe
