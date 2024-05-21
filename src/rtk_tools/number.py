@@ -19,8 +19,14 @@ class rtkNumber(rtkText):
 
   def set(self,value):
     if type(value) is str:
-      super(rtkNumber,self).set(value)
-      return
+      # str -> int変換判定
+      try:
+        intval = int(value)
+        super(rtkNumber,self).set(intval)
+      except:  
+        rospy.logerr("param "+self.prop["name"]+": invalid input value")
+        self.on_abort(event=None)
+        return
     self.io.delete(0,tk.END)
     if len(self.prop["format"])>0:
       fmt="{:"+self.prop["format"]+"}"
