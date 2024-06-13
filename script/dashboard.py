@@ -282,15 +282,17 @@ def cb_indicator(n,msg):
       timeout.set(functools.partial(cb_turnoff,n),0)
   elif isinstance(msg,Float32):
     val=msg.data
-    flg_default=False; cl_default=yellowcolor;
-    flg=flg_default; cl=cl_default;
-    for k,v in item["range"].items():
-      if (v[0] is None): flg_default=v[2]; cl_default=eval(k+"color"); break;
-    for k,v in item["range"].items():
-      print(k,v,(not v[0] is None))
-#      if (not v[0] is None):
-#        if (float(v[0]) <= val <= float(v[1])): flg=v[2]; cl=eval(k+"color"); break;
-    timeout.set(functools.partial(cb_setvalue,n,val,flg,cl,flg_default,cl_default),0)
+    if "range" in item:
+      if item["range"][0]=="in":
+        flg=(item["range"][1] < val < item["range"][2])
+      elif item["range"][0]=="out":
+        flg=(val < item["range"][1] or item["range"][2] < val)
+    timeout.set(functools.partial(cb_setvalue,n,val,flg),0)
+#    if flg:
+#      timeout.set(functools.partial(cb_setvalue,n,val,flg),0)
+#    else:
+#      if "sto" in item: timeout.clear(item["sto"])
+#      timeout.set(functools.partial(cb_setvalue,n,val,flg),0)
  
 def cb_turnon(n):
   global Indicates
@@ -309,20 +311,26 @@ def cb_turnoff(n):
   item["tag"]["font"]=normalfont
   rospy.set_param('/dashboard/ind'+item["topic"],False)
  
-def cb_setvalue(n,val,flg,cl,flg_default=None,cl_default=None):
+def cb_setvalue(n,val,flg):
   global Indicates
   item=Indicates[n]
   if (not val is None):
-    item["tag"]["foreground"]=cl
+    item["tag"]["foreground"]=redcolor if flg else greencolor
     item["tag"]["font"]=boldfont
     item["tag"]["text"]=("{0}:{1:"+item["format"]+"}").format(item["label"],val)
-    if "sto" in item: timeout.clear(item["sto"])
-    item["sto"]=timeout.set(functools.partial(cb_setvalue,n,None,flg_default,cl_default),item["timeout"])
+    if "sto" in item:
+      timeout.clear(item["sto"])
+    item["sto"]=timeout.set(functools.partial(cb_setnul,n),item["timeout"])
   else:
-    if "sto" in item: item.pop("sto")
-    item["tag"]["foreground"]=cl
-    item["tag"]["font"]=boldfont
-    item["tag"]["text"]="{}: {}".format(item["label"],"---")
+    cb_setnul()
+
+def cb_setnul(n):
+  global Indicates
+  item=Indicates[n]
+  if "sto" in item: item.pop("sto")
+  item["tag"]["foreground"]=yellowcolor
+  item["tag"]["font"]=boldfont
+  item["tag"]["text"]="{}: {}".format(item["label"],"---")
   rospy.set_param('/dashboard/ind'+item["topic"],flg)
 
 ####Display parametr############
