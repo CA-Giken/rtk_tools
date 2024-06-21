@@ -331,7 +331,7 @@ def cb_setnul(n):
   item["tag"]["foreground"]=yellowcolor
   item["tag"]["font"]=boldfont
   item["tag"]["text"]="{}: {}".format(item["label"],"---")
-  rospy.set_param('/dashboard/ind'+item["topic"],flg)
+  rospy.set_param('/dashboard/ind'+item["topic"],False)
 
 ####Display parametr############
 def cb_display(n):
