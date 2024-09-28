@@ -18,6 +18,7 @@ def set(cb,delay):
   sto_reflesh()
   return t
 def clear(t):
+  global sto_time,sto_tarray,sto_farray
   if len(sto_tarray)>0:
     try:
       idx=sto_tarray.index(t)
