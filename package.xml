@@ -10,6 +10,4 @@
   <author email="ca-giken@c-able.ne.jp">KazukiHiraizumi</author>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <depend>rovi</depend>
-  <depend>rovi_utils</depend>
 </package>
