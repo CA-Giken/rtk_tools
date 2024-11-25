@@ -50,6 +50,7 @@ def to_report(dat):
       if k in Values:
         Reports=Reports+1
         if(hasattr(v,"__iter__")):
+          if k in Snap: continue
           Snap[k]=v[0]
           Values[k][0].configure(text=str(Config["format"].format(v[0])))
           if(v[1]==0):
@@ -59,6 +60,7 @@ def to_report(dat):
             Values[k][0].configure(foreground=ngcolor[0])
             Values[k][0].configure(background=ngcolor[1])
         else:
+          if k in Snap: continue
           Snap[k]=v
           Values[k][0].configure(text=str(Config["format"].format(v)))
           Values[k][0].configure(foreground=okcolor[0])
@@ -70,10 +72,11 @@ def cb_report(s):
   timeout.set(functools.partial(to_report,dic),0)
 
 def to_update():
-  global Values,Reports,Gate
+  global Values,Reports,Snap,Gate
 #  if Gate>0: to_complete()
   to_complete()
   Gate=0
+  Snap={}
   if Reports==0:
     for row in Values.values():
       for i in range(len(row)-1,0,-1):
